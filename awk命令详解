@@ -189,4 +189,3 @@ awk -F ':' 'BEGIN {count=0;} {name[count] = $1;count++;}; END{for (i = 0; i < NR
 ......
 
 这里使用for循环遍历数组
-
