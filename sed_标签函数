@@ -1,0 +1,44 @@
+b lable
+分支到脚本中带有标记的地方，如果分支不存在则分支到脚本的末尾。
+t label
+if分支，从最后一行开始，条件一旦满足或者T，t命令，将导致分支到带有标号的命令处，或者到脚本的末尾。
+T label
+错误分支，从最后一行开始，一旦发生错误或者T，t命令，将导致分支到带有标号的命令处，或者到脚本的末尾。
+
+[root@liudehua test1]# cat test
+AA
+BC
+AA
+CB
+CC
+AA
+
+[root@liudehua test1]# sed '/^AA/s/$/ YES/;t;s/$/ NO/' test   （t）
+AA YES
+BC NO
+AA YES
+CB NO
+CC NO
+AA YES
+
+如果是AA，执行s/$/ YES/，s命令执行成功，执行t命令，没有标签，跳转到命令的结尾，这样将会跳过后面的s/$/ NO/
+如果不是AA，s/$/ YES/不执行，则t命令也不执行，只执行后面的s/$/ NO/
+	
+[root@liudehua test1]# sed '/^AA/ba;s/$/ NO/;b;:a;s/$/ YES/' test   （b）
+AA YES
+BC NO
+AA YES
+CB NO
+CC NO
+AA YES
+
+如果是AA，执行ba，跳转到标签a处，这样会跳过中间的s/$/ NO/;b，只执行后面的s/$/ YES/
+如果不是AA，ba不执行，执行s/$/ NO/，执行b，没有标签，跳转到命令的结尾，这样将会跳过后面的s/$/ YES/
+
+[root@liudehua test1]# sed '/AA/s#$# YES#;/AA/!s#$# NO#g' test    （非标签函数）
+AA YES
+BC NO
+AA YES
+CB NO
+CC NO
+AA YES
